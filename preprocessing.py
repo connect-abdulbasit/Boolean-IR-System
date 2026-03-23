@@ -1,5 +1,5 @@
 import re
-
+from nltk.stem import PorterStemmer
 def load_stopwords(filepath):
     stopwords = set()
     try:
@@ -29,12 +29,7 @@ def preprocess_text(text, stopwords):
     tokens = remove_stopwords(tokens, stopwords)
     return tokens
 
-def simple_stemmer(word):
-    suffixes = ['ing', 'ed', 'ly', 'es', 's']
-    for suffix in suffixes:
-        if word.endswith(suffix) and len(word) > len(suffix) + 2:
-            return word[:-len(suffix)]
-    return word
+stemmer = PorterStemmer()
 
-def apply_stemming(tokens):
-    return [simple_stemmer(word) for word in tokens]
+def apply_stemming(word):
+    return stemmer.stem(word)

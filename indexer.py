@@ -1,29 +1,35 @@
 import os
+import re
 import json
-from preprocessing import preprocess_text, load_stopwords
+from preprocessing import preprocess_text, load_stopwords, apply_stemming
 
 def build_indexes(data_path, stopwords_path):
     stopwords = load_stopwords(stopwords_path)
     inverted_index = {}
     positional_index = {}
-    doc_id = 0
-    for filename in os.listdir(data_path):
+    files = sorted(
+        [f for f in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, f))],
+        key=lambda f: int(re.search(r'(\d+)', f).group(1))
+    )
+    for filename in files:
         filepath = os.path.join(data_path, filename)
-        if os.path.isfile(filepath):
-            doc_id += 1
-            with open(filepath, 'r', encoding='utf-8') as file:
-                text = file.read()
-            tokens = preprocess_text(text, stopwords)
-            for position, word in enumerate(tokens):
-                if word not in inverted_index:
-                    inverted_index[word] = []
-                if doc_id not in inverted_index[word]:
-                    inverted_index[word].append(doc_id)
-                if word not in positional_index:
-                    positional_index[word] = {}
-                if doc_id not in positional_index[word]:
-                    positional_index[word][doc_id] = []
-                positional_index[word][doc_id].append(position)
+        doc_id = int(re.search(r'(\d+)', filename).group(1))
+        with open(filepath, 'r', encoding='utf-8') as file:
+            text = file.read()
+        tokens = preprocess_text(text, set())
+        for position, word in enumerate(tokens):
+            if word in stopwords:
+                continue
+            word = apply_stemming(word)
+            if word not in inverted_index:
+                inverted_index[word] = []
+            if doc_id not in inverted_index[word]:
+                inverted_index[word].append(doc_id)
+            if word not in positional_index:
+                positional_index[word] = {}
+            if doc_id not in positional_index[word]:
+                positional_index[word][doc_id] = []
+            positional_index[word][doc_id].append(position)
     return inverted_index, positional_index
 
 def save_indexes(inverted_index, positional_index):
