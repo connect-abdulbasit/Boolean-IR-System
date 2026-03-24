@@ -1,4 +1,4 @@
-from preprocessing import apply_stemming
+from .preprocessing import apply_stemming
 
 def and_query(list1, list2):
     return list(set(list1) & set(list2))
@@ -94,7 +94,7 @@ def process_query(query, inverted_index, positional_index, total_docs):
 
     query = query.replace("(", " ( ").replace(")", " ) ")
     tokens = query.lower().split()
-    
+
     operators = {"and", "or", "not", "(", ")"}
     tokens = [t if t in operators else apply_stemming(t) for t in tokens]
 

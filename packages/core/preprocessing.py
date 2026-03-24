@@ -1,5 +1,6 @@
 import re
 from nltk.stem import PorterStemmer
+
 def load_stopwords(filepath):
     stopwords = set()
     try:
