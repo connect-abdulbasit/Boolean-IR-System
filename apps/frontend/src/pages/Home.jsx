@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SearchBar from '../components/SearchBar';
 import Results from '../components/Results';
 import { api } from '../services/api';
+import { useSearch } from '../context/SearchContext';
 
 export default function Home() {
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const {
+    results,
+    setResults,
+    searchQuery,
+    setSearchQuery,
+    hasSearched,
+    setHasSearched,
+    loading,
+    setLoading,
+    error,
+    setError,
+    clearSearch,
+  } = useSearch();
 
   const handleSearch = async (query) => {
     setLoading(true);
@@ -44,7 +53,7 @@ export default function Home() {
           <div className="sticky top-0 z-10 flex items-center gap-8 px-6 py-4 bg-white border-b border-gray-200 shadow-sm md:px-10 lg:px-20">
             <div 
               className="text-2xl font-bold border-none cursor-pointer text-blue-600 hover:opacity-80 transition-opacity" 
-              onClick={() => { setHasSearched(false); setResults([]); }}
+              onClick={clearSearch}
             >
               Boolean IR
             </div>

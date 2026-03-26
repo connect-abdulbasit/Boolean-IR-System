@@ -28,7 +28,7 @@ def proximity_query(pos_index, term1, term2, k):
 
         for p1 in positions1:
             for p2 in positions2:
-                if p2-p1 <= k+1 and p2-p1 > 0:
+                if abs(p2 - p1) <= k+1:
                     result.append(doc)
                     break
 
